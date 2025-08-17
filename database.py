@@ -1,6 +1,7 @@
 import os.path
 import sqlite3
 
+from datetime import datetime
 from models import Event
 
 
@@ -134,13 +135,13 @@ class Database:
         );
         """)
 
-        self.cursor.commit()
+        self.conn.commit()
         self.conn.close()
 
 
 if __name__ == "__main__":
     database = Database("./database.sqlite")
-    # e = Event(None, "Test", "Ein Test Event", datetime.datetime.now(), datetime.datetime.now())
-    # database.insert_event(e)
+    e = Event(None, "Test", "Ein Test Event", datetime.now().isoformat(), datetime.now().isoformat())
+    database.insert_event(e)
 
-    e = database.get_event_by_id(11)
+    e = database.get_event_by_id(2)
