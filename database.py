@@ -2,7 +2,7 @@ import os.path
 import sqlite3
 
 from datetime import datetime
-from models import Event
+from structures import Event, Reminder, DBStructure
 
 
 class Database:
@@ -17,66 +17,67 @@ class Database:
         self.conn = sqlite3.connect(self.db_path)
         self.cursor = self.conn.cursor()
 
-    def insert_event(self, event: Event):
+    def update_in_database(self, insertable: DBStructure, db_name: str):
         self.connect_to_db()
 
-        values = event.values
-        columns = event.columns
+        if insertable.id is None:
+            raise ValueError("The Insertable is not in the Database")
 
-        placeholders = ", ".join(["?"] * len(values))
-        column_names = ", ".join(columns)
-
-        sql = f"INSERT INTO events ({column_names}) VALUES ({placeholders})"
-
-        self.cursor.execute(sql, values)
-        self.conn.commit()
-        event.id = self.cursor.lastrowid
-        self.conn.close()
-
-    def update_event(self, event: Event):
-        self.connect_to_db()
-
-        if event.id is None:
-            raise ValueError("The Event is not in the Database")
-
-        event.update_columns_and_values()
-        values = event.values
-        columns = event.columns
+        insertable.update_columns_and_values()
+        values = insertable.values
+        columns = insertable.columns
 
         set_clause = ", ".join([f"{col} = ?" for col in columns])
 
-        sql = f"UPDATE events SET {set_clause} WHERE id = ?"
+        sql = f"UPDATE {db_name} SET {set_clause} WHERE id = ?"
 
-        self.cursor.execute(sql, values + [event.id])
+        self.cursor.execute(sql, values + [insertable.id])
 
         self.conn.commit()
         self.conn.close()
 
-    def delete_event(self, event: Event):
+    def delete_from_database(self, insertable: DBStructure, db_name: str):
         self.connect_to_db()
 
-        if event.id is None:
+        if insertable.id is None:
             raise ValueError("The Event is not in the Database")
 
-        event.update_columns_and_values()
+        insertable.update_columns_and_values()
 
-        sql = f"DELETE FROM events WHERE id = {event.id}"
+        sql = f"DELETE FROM {db_name} WHERE id = {insertable.id}"
         self.cursor.execute(sql)
 
         self.conn.commit()
         self.conn.close()
 
-    def get_event_by_id(self, event_id: int) -> Event:
+
+    def insert_to_database(self, insertable: DBStructure, db_name: str):
         self.connect_to_db()
-        sql = f"SELECT * FROM events WHERE id = ?"
-        self.cursor.execute(sql, [event_id])
-        event = self.cursor.fetchone()
+
+        values = insertable.values
+        columns = insertable.columns
+
+        placeholders = ", ".join(["?"] * len(values))
+        column_names = ", ".join(columns)
+
+        sql = f"INSERT INTO {db_name} ({column_names}) VALUES ({placeholders})"
+
+        self.cursor.execute(sql, values)
+        self.conn.commit()
+        insertable.id = self.cursor.lastrowid
+        self.conn.close()
+
+    def get_row_by_id(self, insertable_id: int, db_name) -> tuple:
+        self.connect_to_db()
+        sql = f"SELECT * FROM {db_name} WHERE id = ?"
+        self.cursor.execute(sql, [insertable_id])
+        returned_insertable = self.cursor.fetchone()
+        if returned_insertable is None:
+            raise ValueError("The insertable is not in the Database")
         self.conn.commit()
         self.conn.close()
 
-        new_event = Event(*event[:-2])
-
-        return new_event
+        return returned_insertable
 
     def create_calendar_database(self):
         self.connect_to_db()
@@ -141,7 +142,9 @@ class Database:
 
 if __name__ == "__main__":
     database = Database("./database.sqlite")
-    e = Event(None, "Test", "Ein Test Event", datetime.now().isoformat(), datetime.now().isoformat())
-    database.insert_event(e)
+    # e = Event(None, "Test", "Ein Test Event", datetime.now().isoformat(), datetime.now().isoformat())  # type: ignore
+    # database.insert_to_database(e, "events")
 
-    e = database.get_event_by_id(2)
+    returned_event = database.get_row_by_id(6, "events")
+    returned_event = Event(*returned_event[:-2])  # type: ignore
+    print(returned_event)
