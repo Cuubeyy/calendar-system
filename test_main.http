@@ -28,3 +28,7 @@ GET http://localhost:8000/create/attendee?event_id=9&status=invited
 <> 2025-08-17T135140.200.json
 <> 2025-08-17T125533.200.json
 <> 2025-08-17T125047.422.json
+
+
+###
+GET http://localhost:8000/create/reminder?event_id=9&minutes_before=10&method=push

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from database import Database
-from structures import Event, RecurrenceRule, Attendee
+from structures import Event, RecurrenceRule, Attendee, Reminder
 
 app = FastAPI()
 db = Database("database.sqlite")
@@ -23,3 +23,9 @@ async def create_attendee(event_id, status):
     attendee = Attendee(None, event_id, status)
     db.insert_to_database(attendee, "attendees")
     return attendee
+
+@app.get("/create/reminder")
+async def create_reminder(event_id, minutes_before, method):
+    reminder = Reminder(None, event_id, minutes_before, method)
+    db.insert_to_database(reminder, "reminders")
+    return reminder
