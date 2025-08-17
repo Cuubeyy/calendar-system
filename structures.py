@@ -51,7 +51,7 @@ class Reminder(DBStructure):
         self.columns = ["event_id", "minutes_before", "method"]
         self.values = [self.event_id, self.minutes_before, self.method]
 
-class Attendees(DBStructure):
+class Attendee(DBStructure):
     def __init__(self, attendees_id: int, event_id: int, status: str):
         super().__init__()
 
@@ -62,7 +62,7 @@ class Attendees(DBStructure):
         self.columns = ["event_id", "status"]
         self.values = [self.event_id, self.status]
 
-class RecurrenceRules(DBStructure):
+class RecurrenceRule(DBStructure):
     def __init__(self, rule_id: int, frequency: str, interval: int, by_day: str, until: str = None):
         super().__init__()
 
