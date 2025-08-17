@@ -29,3 +29,26 @@ async def create_reminder(event_id, minutes_before, method):
     reminder = Reminder(None, event_id, minutes_before, method)
     db.insert_to_database(reminder, "reminders")
     return reminder
+
+@app.get("/update/event/{event_id}")
+async def update_event(event_id, name=None, description=None, start_date=None, end_date=None,
+                       is_all_day=None, location=None, recurrence_rule_id=None):
+    event_row = db.get_row_by_id(event_id, "events")
+    event = Event(*event_row[:-2])
+
+    updates = {
+        "name": name,
+        "description": description,
+        "start_date": start_date,
+        "end_date": end_date,
+        "is_all_day": is_all_day,
+        "location": location,
+        "recurrence_rule_id": recurrence_rule_id
+    }
+
+    for field, value in updates.items():
+        if value is not None:
+            setattr(event, field, value)
+
+    db.update_in_database(event, "events")
+    return True

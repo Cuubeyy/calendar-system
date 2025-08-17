@@ -32,3 +32,6 @@ GET http://localhost:8000/create/attendee?event_id=9&status=invited
 
 ###
 GET http://localhost:8000/create/reminder?event_id=9&minutes_before=10&method=push
+
+###
+GET http://localhost:8000/update/event/13?name=geaendert
