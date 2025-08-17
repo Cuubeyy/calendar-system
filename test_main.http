@@ -1,11 +1,30 @@
-# Test your FastAPI endpoints
+###
+GET http://localhost:8000/create/event?event_name=API-Test&start_date=2025-08-17T125047&end_date=2025-08-17T125047
 
-GET http://127.0.0.1:8000/
-Accept: application/json
+<> 2025-08-17T141021.200.json
+<> 2025-08-17T140547.200.json
+<> 2025-08-17T140408.200.json
 
 ###
+GET http://localhost:8000/create/recurrence-rule?frequency=1&interval=1&by_day=vier
 
-GET http://127.0.0.1:8000/hello/User
-Accept: application/json
+<> 2025-08-17T141028.200.json
+<> 2025-08-17T141025.200.json
+<> 2025-08-17T141005.200.json
+<> 2025-08-17T140547-1.200.json
+<> 2025-08-17T140539.200.json
+<> 2025-08-17T140408-1.200.json
+<> 2025-08-17T140354.200.json
+<> 2025-08-17T140330.200.json
+<> 2025-08-17T140308.200.json
 
 ###
+GET http://localhost:8000/create/attendee?event_id=9&status=invited
+
+<> 2025-08-17T140547-2.200.json
+<> 2025-08-17T140408.500.txt
+<> 2025-08-17T135751.200.json
+<> 2025-08-17T135222.200.json
+<> 2025-08-17T135140.200.json
+<> 2025-08-17T125533.200.json
+<> 2025-08-17T125047.422.json
